@@ -1,27 +1,987 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>ApusFly | Web Platform Role Features</title><style>
-:root{--navy:#101c32;--blue:#2563eb;--ink:#15243a;--muted:#637188;--line:#dfe7f0;--bg:#f4f7fb;--white:#fff}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif;color:var(--ink);line-height:1.6}.hero{background:linear-gradient(125deg,#0c1930,#18365b 70%,#245b80);color:white;padding:54px max(24px,calc((100vw - 1180px)/2)) 48px}.hero h1{font-size:clamp(30px,4vw,48px);line-height:1.14;margin:10px 0}.hero p{max-width:820px;color:#d6e4f4}.eyebrow{letter-spacing:.16em;text-transform:uppercase;font-size:12px;font-weight:800;color:#91d9ff}.shell{max-width:1180px;margin:auto;padding:30px 22px 70px;display:grid;grid-template-columns:255px minmax(0,1fr);gap:28px}aside{position:sticky;top:18px;align-self:start;max-height:calc(100vh - 36px);overflow:auto;background:white;border:1px solid var(--line);border-radius:14px;padding:18px}aside strong{display:block;font-size:13px;color:#637188;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}aside a{display:block;color:#33445c;text-decoration:none;font-size:13px;padding:6px 9px;border-radius:7px}aside a:hover{background:#eaf2ff;color:#1d4ed8}main{min-width:0}.intro,.role,.section{background:white;border:1px solid var(--line);border-radius:16px;padding:25px 29px;margin-bottom:22px;box-shadow:0 4px 18px #0c254508}.intro h2,.section h2{margin-top:0}.role{scroll-margin-top:20px}.role h2{margin:0;font-size:25px}.rolehead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:18px}.pill{font-size:11px;white-space:nowrap;font-weight:750;border-radius:100px;background:#e8f1ff;color:#1d4ed8;padding:5px 10px}.purpose{font-size:14px;color:var(--muted);margin-top:7px}.groups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.group{background:#f8fafd;border:1px solid #e8edf5;border-radius:10px;padding:14px 16px}.group h3{font-size:14px;margin:0 0 8px;color:#123d71}.group ul{padding-left:19px;margin:0;font-size:13px}.group li{margin:4px 0}.restriction{background:#fff6eb;border-left:3px solid #f0a74b;border-radius:5px;padding:10px 13px;margin-top:16px;font-size:13px}.section table{width:100%;border-collapse:collapse;font-size:13px}.section th,.section td{text-align:left;border-bottom:1px solid var(--line);padding:11px 9px;vertical-align:top}.section th{background:#f3f7fc;color:#244266}.note{color:var(--muted);font-size:13px}.actions{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}.actions button{border:1px solid #8bc7ee;background:#dff2ff;color:#113b60;border-radius:8px;padding:9px 13px;cursor:pointer;font-weight:700}.actions button:hover{background:white}@media(max-width:850px){.shell{grid-template-columns:1fr}aside{position:static;max-height:none;display:none}.groups{grid-template-columns:1fr}.rolehead{flex-direction:column}.hero{padding:40px 22px}}@media print{body{background:white}.hero{padding:22px;background:white;color:#15243a;border-bottom:2px solid #15243a}.hero p{color:#45566d}.shell{display:block;padding:12px}.intro,.role,.section{box-shadow:none;break-inside:avoid;border:1px solid #ddd}aside,.actions{display:none}.groups{grid-template-columns:repeat(2,1fr)}}
-</style></head><body><header class="hero"><div class="eyebrow">ApusFly • Product Requirements • Version 1.0</div><h1>Web Platform Roles & Features</h1><p>Detailed proposed feature specifications for 14 web platform roles across ApusFly administration, drone service providers, and enterprise/government clients.</p><div class="actions"><button onclick="window.print()">Print / Save as PDF</button><button onclick="document.getElementById('roles').scrollIntoView()">Explore Roles ↓</button></div></header><div class="shell"><aside><strong>Contents</strong><a href="#overview">Platform Overview</a><strong>Platform Roles</strong><a href="#super-admin">01 Super Admin</a><a href="#system-admin">02 System Admin</a><a href="#operations-manager">03 Operations Manager</a><a href="#customer-support">04 Customer Support Agent</a><a href="#finance">05 Finance / Accounting</a><strong>Provider Roles</strong><a href="#provider-owner">06 Provider Owner</a><a href="#provider-manager">07 Provider Manager</a><a href="#provider-staff">08 Provider Staff</a><strong>Client Roles</strong><a href="#enterprise">09 Enterprise Client</a><a href="#government">10 Government / LGU Client</a><strong>Specialized Platform Roles</strong><a href="#sales">11 Sales / Business Development</a><a href="#marketing">12 Marketing Manager</a><a href="#auditor">13 Auditor</a><a href="#technical-support">14 Technical Support</a><strong>Architecture</strong><a href="#portals">Portal Structure</a><a href="#rbac">RBAC Rules</a><a href="#roadmap">Implementation Phases</a></aside><main><section class="intro" id="overview"><h2>Platform Overview</h2><p>ApusFly is a drone services booking platform. Its web application should share a single Next.js codebase while presenting role-specific navigation, dashboards, permissions, and organization-scoped data.</p><p><b>Platform Administration:</b> internal management, operations, finance, support, growth, and audit.<br><b>Provider Management:</b> drone businesses, pilots, equipment, services, and bookings.<br><b>Organization Clients:</b> enterprise and government projects, approvals, service requests, and reports.</p><p class="note">Status: proposed functional requirements, not an implementation audit. Features may be phased according to the MVP roadmap.</p></section><div id="roles"></div>
-<script>
-const roles=[
-{slug:'super-admin',name:'Super Admin',scope:'Entire Platform',purpose:'Highest-level governance, security, configuration, and administrative authority.',groups:{'Executive Dashboard':['Platform-wide users, providers, pilots, drones, bookings, revenue, commissions and payouts','Live booking and operational activity','Compliance alerts, financial anomalies and integration health'],'Identity & Access':['Manage platform user lifecycle and account status','Assign and revoke internal roles; review permission changes','Review account access history; revoke sessions and tokens','Enforce MFA for privileged accounts'],'Platform Settings':['Manage service categories, regions, booking and cancellation policies','Configure commission rules, service fees and approved integrations','Manage notifications, feature flags, maintenance notices and announcements'],'Governance':['Review audit logs, verification decisions and incident reports','Approve exceptional administrative changes','Oversee retention policies and recovery readiness']},restriction:'Cannot bypass immutable audit records, payment controls, or mandatory approval procedures.'},
-{slug:'system-admin',name:'System Admin',scope:'Platform Administration',purpose:'Runs routine administration and moderation without ownership-level authority.',groups:{'Administration Dashboard':['Account and provider statistics','Pending verification and moderation queues','Administrative task and service health summaries'],'User Administration':['Search and filter customer, pilot and provider accounts','Review account status and investigate violations','Assist with account recovery and verification','Assign only permitted operational roles'],'Provider & Service Administration':['Review provider onboarding documents','Approve or reject eligible listings under policy','Manage service categories and coverage references','Flag suspicious listings or inactive providers'],'Operational Configuration':['Maintain permitted reference data and templates','Manage FAQs, help content and announcements','Export administrative and operational reports']},restriction:'Cannot grant Super Admin privileges, change ownership-level controls or modify settled financial records.'},
-{slug:'operations-manager',name:'Operations Manager',scope:'Platform Operations',purpose:'Oversees service fulfillment, scheduling, provider coordination and incidents.',groups:{'Operations Dashboard':['Scheduled, active, completed, cancelled and disputed bookings','Unassigned jobs, delays and scheduling conflicts','Provider and pilot availability; geographic service activity'],'Booking Coordination':['Review and intervene in eligible bookings','Coordinate provider/pilot reassignment and rescheduling','Apply policy-governed cancellations','Monitor booking state transitions'],'Flight Operations':['Monitor service readiness, reported flight progress and completion','Review weather-related delays and operational checklists','Review evidence, deliverables and incident escalations'],'Quality & Reporting':['Monitor response times, completion rates and complaints','Recommend provider restrictions for repeated failures','Export fulfillment, incident and cancellation reports']},restriction:'No unrestricted payment adjustments, permission administration or rewriting settled transactions.'},
-{slug:'customer-support',name:'Customer Support Agent',scope:'Customer Assistance',purpose:'Handles inquiries, disputes, tickets and customer-facing assistance.',groups:{'Support Dashboard':['Open, assigned, escalated and resolved tickets','Response deadlines, priorities and satisfaction metrics'],'Ticket Handling':['Create, classify, assign and resolve support cases','Reply to users and attach evidence','Maintain internal notes and escalation history','Route cases to Operations, Finance or Technical Support'],'Booking Assistance':['Find bookings and inspect authorized status timelines','Help request rescheduling or cancellation','Investigate missed services and incomplete jobs','Escalate refund requests to Finance'],'Account Help & Knowledge Base':['View minimal profile details needed for a case','Guide registration, recovery and verification inquiries','Maintain approved help articles and response templates']},restriction:'No direct refunds, role changes, full payment credentials or default access to private KYC documents.'},
-{slug:'finance',name:'Finance / Accounting',scope:'Financial Operations',purpose:'Manages reconciliations, commissions, payouts, refunds and financial reporting.',groups:{'Finance Dashboard':['Gross booking value, commissions and payable balances','Captured, pending, failed, refunded and disputed payments','Settlement and revenue trends'],'Payments & Refunds':['Review gateway transaction status and webhook results','Reconcile gateway events against booking records','Investigate duplicate or failed payments','Approve or execute refunds within delegated limits'],'Commissions & Payouts':['Review commission calculations and statements','Propose rate adjustments for approval','Prepare payout batches and verify eligibility','Track failed settlements, reversals and provider balances'],'Accounting & Exports':['Generate revenue, settlement and reconciliation reports','Review chargebacks and refund history','Export authorized accounting and tax-related records']},restriction:'Use separation of duties; no unilateral high-risk adjustments or alteration of settled ledger entries.'},
-{slug:'provider-owner',name:'Provider Owner',scope:'Own Provider Organization',purpose:'Controls the registered drone service business and its personnel, services and earnings.',groups:{'Business Dashboard':['Provider bookings, revenue, ratings and upcoming schedules','Fleet and pilot readiness; payout and compliance alerts'],'Business & Team':['Maintain provider business profile, locations and documents','Manage verified payout information','Invite or remove managers and staff','Review team activity and pilot affiliations'],'Fleet & Service Catalog':['Register drones and track capabilities, maintenance and insurance','Manage pilot and equipment availability','Create service listings, pricing, coverage and descriptions','Pause listings or submit changes for platform review'],'Bookings & Earnings':['Accept or decline requests; assign resources','Monitor completion evidence and disputes','View earnings, fees, commissions and payout statements','Export business performance reports']},restriction:'Cannot access other provider organizations or override platform-wide commission policies.'},
-{slug:'provider-manager',name:'Provider Manager',scope:'Assigned Provider Organization',purpose:'Manages day-to-day service operations for a provider business.',groups:{'Operations Dashboard':['Incoming bookings, active jobs and fulfillment alerts','Pilot schedules and drone availability'],'Booking Management':['Accept or decline delegated booking requests','Assign pilots and drones; coordinate rescheduling','Monitor jobs and verify submitted completion evidence'],'Fleet & Workforce':['Maintain pilot schedules and availability','Monitor credential expiry and drone maintenance','Flag unsafe or unavailable equipment','Supervise provider staff and assigned tasks'],'Services & Reports':['Edit permitted listings and availability','Propose pricing changes for Owner approval','Generate utilization and service reports','Investigate service complaints']},restriction:'Cannot change business ownership, payout destinations or sensitive financial settings without Owner approval.'},
-{slug:'provider-staff',name:'Provider Staff',scope:'Assigned Provider Organization',purpose:'Supports booking coordination, schedules and routine provider records.',groups:{'Staff Dashboard':['Assigned tasks and upcoming bookings','Customer requests, calendar and notifications'],'Booking Assistance':['View assigned bookings and scheduling details','Update permitted operational notes','Coordinate customers and pilots','Upload authorized service documents and evidence'],'Scheduling & Records':['Maintain booking calendars','Record pilot and equipment availability','Report delays, conflicts and maintenance needs','Prepare booking summaries and provider records']},restriction:'Cannot change roles, approve refunds, access payout settings or override compliance decisions.'},
-{slug:'enterprise',name:'Enterprise Client',scope:'Own Enterprise Organization',purpose:'Coordinates corporate drone service procurement, projects and spending.',groups:{'Organization Dashboard':['Active projects, upcoming bookings and pending approvals','Project spending, deliverables and provider performance'],'Organization Administration':['Maintain company, branch and department details','Invite employees with scoped organization permissions','Configure requester/approver roles and spending controls'],'Procurement & Projects':['Browse services and request custom quotations','Compare proposals and submit single or bulk bookings','Schedule recurring inspections or surveys','Create projects and group bookings by site'],'Deliverables & Billing':['Review job progress, imagery, mapping outputs and reports','Request revisions or lodge disputes','Download invoices, receipts and authorized deliverables','Export project and spending summaries']},restriction:'All records and approvals are limited to the organization and the user’s assigned projects.'},
-{slug:'government',name:'Government / LGU Client',scope:'Own Government Organization',purpose:'Manages authorized public-sector service requests, field projects and reporting.',groups:{'Agency Dashboard':['Agency projects, service requests and pending approvals','Field operation status, budgets and completed deliverables'],'Agency Administration':['Manage agency, departments and authorized personnel','Assign requesters and approvers','Configure approval chains and project locations'],'Service Requests & Coordination':['Request mapping, inspection, agricultural or environmental services','Coordinate disaster assessment support where authorized','Request quotations and schedule approved field operations','Track project milestones and completion reports'],'Records & Reports':['Attach procurement references and approved budget identifiers','Review aerial imagery, mapping and inspection deliverables','Generate service completion and project reports','Access invoices and authorized documentation exports']},restriction:'No access to other agencies. Procurement and records features must follow applicable agency requirements; software features alone do not establish compliance.'},
-{slug:'sales',name:'Sales / Business Development Staff',scope:'Platform Sales & Partnerships',purpose:'Acquires providers, enterprise accounts, government clients and strategic partners.',groups:{'Sales Dashboard':['Lead funnel, acquisition targets and conversion rates','Active opportunities, upcoming meetings and follow-ups'],'Lead Management':['Create and categorize provider, enterprise, LGU and partner leads','Assign lead owners and record communications','Track meetings, requirements and next steps'],'Deals & Partnerships':['Manage provider acquisition pipeline','Prepare partnership and commercial proposals','Track negotiations and contracts','Submit special pricing or discounts for approval'],'Performance':['Forecast opportunities and conversion','Report partnership and acquisition activity','Handoff closed opportunities to Operations and Finance']},restriction:'Cannot unilaterally change commission rates or approve exceptional commercial terms.'},
-{slug:'marketing',name:'Marketing Manager',scope:'Platform Marketing',purpose:'Manages campaigns, content, promotions and acquisition analytics.',groups:{'Marketing Dashboard':['Campaign conversion, traffic and acquisition trends','Promotional redemptions, funnel and budget metrics'],'Campaigns & Promotions':['Create and schedule campaigns','Manage approved vouchers, referral campaigns and banners','Track budgets, reach and campaign performance'],'Content Management':['Edit permitted landing pages and service descriptions','Publish news, articles and promotional media','Maintain marketing FAQs and announcements'],'Audience & Reporting':['Analyze aggregated audience segments','Measure campaign sources and qualified leads','Coordinate lead handoffs with Sales','Export marketing performance reports']},restriction:'No default access to private KYC, financial details or unconsented personal data; honor opt-outs.'},
-{slug:'auditor',name:'Auditor',scope:'Authorized Read-Only Oversight',purpose:'Independently reviews business processes, transactions, permissions and compliance evidence.',groups:{'Audit Dashboard':['Administrative changes and security events','Financial exceptions and review queues'],'Access & Activity Review':['Inspect relevant logins and permission history','Review provider verification and account status decisions','Trace booking transitions and operational incidents'],'Financial Review':['Inspect authorized transaction and settlement records','Trace refunds, payout approvals and adjustments','Identify reconciliation anomalies'],'Findings & Reporting':['Document audit findings and recommendations','Export approved evidence and reports','Track management responses and corrective actions']},restriction:'Read-only for underlying business records; no refunds, payments, role changes or audit log deletion. Sensitive evidence access is logged.'},
-{slug:'technical-support',name:'Technical Support',scope:'Platform Technical Operations',purpose:'Diagnoses application incidents, API failures and integration issues.',groups:{'Technical Dashboard':['Availability, API errors and queue failures','Open incidents and integration alerts'],'Incident Handling':['Receive escalated technical tickets','Triage by severity and document troubleshooting','Escalate infrastructure problems and maintain timelines','Prepare post-incident reports'],'Diagnostics':['Review sanitized logs and request identifiers','Monitor background jobs and integration connectivity','Inspect deployment status and non-sensitive metadata','Diagnose authentication and notification failures'],'Maintenance':['Track recurring bugs and known issues','Issue approved maintenance notices','Retry safe idempotent operations where authorized','Coordinate fixes with engineering teams']},restriction:'No default production database writes, secret retrieval, payment edits or unrestricted user impersonation.'}
-];
-const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-document.getElementById('roles').innerHTML=roles.map((r,i)=>`<section class="role" id="${r.slug}"><div class="rolehead"><div><div class="eyebrow" style="color:#28649b">Role ${String(i+1).padStart(2,'0')}</div><h2>${esc(r.name)}</h2><div class="purpose">${esc(r.purpose)}</div></div><span class="pill">${esc(r.scope)}</span></div><div class="groups">${Object.entries(r.groups).map(([heading,items])=>`<div class="group"><h3>${esc(heading)}</h3><ul>${items.map(item=>`<li>${esc(item)}</li>`).join('')}</ul></div>`).join('')}</div><div class="restriction"><b>Access boundary:</b> ${esc(r.restriction)}</div></section>`).join('');
-</script>
-<section class="section" id="portals"><h2>Recommended Portal Structure</h2><table><thead><tr><th>Portal</th><th>Route</th><th>Roles</th></tr></thead><tbody><tr><td>Platform Administration</td><td><code>/admin</code></td><td>Super Admin, System Admin, Operations, Customer Support, Finance, Sales, Marketing, Auditor, Technical Support</td></tr><tr><td>Provider Management</td><td><code>/provider</code></td><td>Provider Owner, Provider Manager, Provider Staff</td></tr><tr><td>Organization Clients</td><td><code>/organization</code></td><td>Enterprise Client, Government / LGU Client</td></tr></tbody></table><p class="note">Suggested host: <code>platform.apusfly.com</code>. Share UI components while tailoring navigation and permissions by role.</p></section>
-<section class="section" id="rbac"><h2>RBAC and Security Requirements</h2><p><b>Platform roles</b> should be assigned through platform-level user-role relationships. <b>Provider roles</b> and <b>organization client roles</b> should be bound to memberships within a specific provider or organization. The same user may hold different roles in different organizations.</p><p>Example permission names: <code>platform.users.read</code>, <code>platform.audit.read</code>, <code>platform.finance.refunds.approve</code>, <code>provider.bookings.assign</code>, <code>provider.drones.update</code>, <code>organization.projects.create</code>, <code>organization.bookings.approve</code>.</p><p>Laravel must enforce every permission and resource ownership rule on the server. Hiding menu items in Next.js is only a user-interface convenience. Sensitive actions require audit trails, and high-risk financial or access changes should use separation of duties.</p><p class="note">The prior RBAC seeders covered 12 roles; the updated 14-role web specification adds Sales / Business Development, Marketing Manager, Auditor, and Technical Support. Align seeders and permission policies before enabling these roles.</p></section>
-<section class="section" id="roadmap"><h2>Recommended Implementation Roadmap</h2><table><thead><tr><th>Phase</th><th>Roles</th><th>Primary Goal</th></tr></thead><tbody><tr><td>1 — Foundation</td><td>Super Admin, System Admin</td><td>Authentication, RBAC hardening, users and administration</td></tr><tr><td>2 — Providers</td><td>Owner, Manager, Staff</td><td>Onboarding, drones, pilots, service listings</td></tr><tr><td>3 — Operations</td><td>Operations Manager, Customer Support</td><td>Bookings, scheduling, service fulfillment, tickets</td></tr><tr><td>4 — Finance</td><td>Finance / Accounting</td><td>Payments, commissions, refunds and payouts</td></tr><tr><td>5 — Organizations</td><td>Enterprise, Government / LGU</td><td>Projects, quotations, approvals and reporting</td></tr><tr><td>6 — Expansion</td><td>Sales, Marketing, Auditor, Technical Support</td><td>Growth, oversight, diagnostics and advanced administration</td></tr></tbody></table><p class="note">Define all 14 roles early; implement their workflows in phases. Organization clients will eventually benefit from additional scoped subroles such as Organization Admin, Requester and Approver.</p></section></main></div></body></html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ApusFly | Web Platform Role Features</title>
+    <style>
+      :root {
+        --navy: #101c32;
+        --blue: #2563eb;
+        --ink: #15243a;
+        --muted: #637188;
+        --line: #dfe7f0;
+        --bg: #f4f7fb;
+        --white: #fff;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        font-family:
+          Inter,
+          system-ui,
+          -apple-system,
+          Segoe UI,
+          Arial,
+          sans-serif;
+        color: var(--ink);
+        line-height: 1.6;
+      }
+      .hero {
+        background: linear-gradient(125deg, #0c1930, #18365b 70%, #245b80);
+        color: white;
+        padding: 54px max(24px, calc((100vw - 1180px) / 2)) 48px;
+      }
+      .hero h1 {
+        font-size: clamp(30px, 4vw, 48px);
+        line-height: 1.14;
+        margin: 10px 0;
+      }
+      .hero p {
+        max-width: 820px;
+        color: #d6e4f4;
+      }
+      .eyebrow {
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        font-size: 12px;
+        font-weight: 800;
+        color: #91d9ff;
+      }
+      .shell {
+        max-width: 1180px;
+        margin: auto;
+        padding: 30px 22px 70px;
+        display: grid;
+        grid-template-columns: 255px minmax(0, 1fr);
+        gap: 28px;
+      }
+      aside {
+        position: sticky;
+        top: 18px;
+        align-self: start;
+        max-height: calc(100vh - 36px);
+        overflow: auto;
+        background: white;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 18px;
+      }
+      aside strong {
+        display: block;
+        font-size: 13px;
+        color: #637188;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+      }
+      aside a {
+        display: block;
+        color: #33445c;
+        text-decoration: none;
+        font-size: 13px;
+        padding: 6px 9px;
+        border-radius: 7px;
+      }
+      aside a:hover {
+        background: #eaf2ff;
+        color: #1d4ed8;
+      }
+      main {
+        min-width: 0;
+      }
+      .intro,
+      .role,
+      .section {
+        background: white;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 25px 29px;
+        margin-bottom: 22px;
+        box-shadow: 0 4px 18px #0c254508;
+      }
+      .intro h2,
+      .section h2 {
+        margin-top: 0;
+      }
+      .role {
+        scroll-margin-top: 20px;
+      }
+      .role h2 {
+        margin: 0;
+        font-size: 25px;
+      }
+      .rolehead {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 14px;
+        margin-bottom: 18px;
+      }
+      .pill {
+        font-size: 11px;
+        white-space: nowrap;
+        font-weight: 750;
+        border-radius: 100px;
+        background: #e8f1ff;
+        color: #1d4ed8;
+        padding: 5px 10px;
+      }
+      .purpose {
+        font-size: 14px;
+        color: var(--muted);
+        margin-top: 7px;
+      }
+      .groups {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+      .group {
+        background: #f8fafd;
+        border: 1px solid #e8edf5;
+        border-radius: 10px;
+        padding: 14px 16px;
+      }
+      .group h3 {
+        font-size: 14px;
+        margin: 0 0 8px;
+        color: #123d71;
+      }
+      .group ul {
+        padding-left: 19px;
+        margin: 0;
+        font-size: 13px;
+      }
+      .group li {
+        margin: 4px 0;
+      }
+      .restriction {
+        background: #fff6eb;
+        border-left: 3px solid #f0a74b;
+        border-radius: 5px;
+        padding: 10px 13px;
+        margin-top: 16px;
+        font-size: 13px;
+      }
+      .section table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+      .section th,
+      .section td {
+        text-align: left;
+        border-bottom: 1px solid var(--line);
+        padding: 11px 9px;
+        vertical-align: top;
+      }
+      .section th {
+        background: #f3f7fc;
+        color: #244266;
+      }
+      .note {
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+      }
+      .actions button {
+        border: 1px solid #8bc7ee;
+        background: #dff2ff;
+        color: #113b60;
+        border-radius: 8px;
+        padding: 9px 13px;
+        cursor: pointer;
+        font-weight: 700;
+      }
+      .actions button:hover {
+        background: white;
+      }
+      @media (max-width: 850px) {
+        .shell {
+          grid-template-columns: 1fr;
+        }
+        aside {
+          position: static;
+          max-height: none;
+          display: none;
+        }
+        .groups {
+          grid-template-columns: 1fr;
+        }
+        .rolehead {
+          flex-direction: column;
+        }
+        .hero {
+          padding: 40px 22px;
+        }
+      }
+      @media print {
+        body {
+          background: white;
+        }
+        .hero {
+          padding: 22px;
+          background: white;
+          color: #15243a;
+          border-bottom: 2px solid #15243a;
+        }
+        .hero p {
+          color: #45566d;
+        }
+        .shell {
+          display: block;
+          padding: 12px;
+        }
+        .intro,
+        .role,
+        .section {
+          box-shadow: none;
+          break-inside: avoid;
+          border: 1px solid #ddd;
+        }
+        aside,
+        .actions {
+          display: none;
+        }
+        .groups {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="hero">
+      <div class="eyebrow">ApusFly • Product Requirements • Version 1.1</div>
+      <h1>Web Platform Roles & Features</h1>
+      <p>
+        Proposed capabilities for 14 web roles supporting mission coordination,
+        compliant flight operations, live aerial intelligence, and decision
+        support across providers, enterprises, and government agencies.
+      </p>
+      <div class="actions">
+        <button onclick="window.print()">Print / Save as PDF</button
+        ><button onclick="document.getElementById('roles').scrollIntoView()">
+          Explore Roles ↓
+        </button>
+      </div>
+    </header>
+    <div class="shell">
+      <aside>
+        <strong>Contents</strong><a href="#overview">Platform Overview</a
+        ><strong>Platform Roles</strong><a href="#super-admin">01 Super Admin</a
+        ><a href="#system-admin">02 System Admin</a
+        ><a href="#operations-manager">03 Operations Manager</a
+        ><a href="#customer-support">04 Customer Support Agent</a
+        ><a href="#finance">05 Finance / Accounting</a
+        ><strong>Provider Roles</strong
+        ><a href="#provider-owner">06 Provider Owner</a
+        ><a href="#provider-manager">07 Provider Manager</a
+        ><a href="#provider-staff">08 Provider Staff</a
+        ><strong>Client Roles</strong
+        ><a href="#enterprise">09 Enterprise Client</a
+        ><a href="#government">10 Government / LGU Client</a
+        ><strong>Specialized Platform Roles</strong
+        ><a href="#sales">11 Sales / Business Development</a
+        ><a href="#marketing">12 Marketing Manager</a
+        ><a href="#auditor">13 Auditor</a
+        ><a href="#technical-support">14 Technical Support</a
+        ><strong>Architecture</strong><a href="#portals">Portal Structure</a
+        ><a href="#rbac">RBAC Rules</a
+        ><a href="#roadmap">Implementation Phases</a>
+      </aside>
+      <main>
+        <section class="intro" id="overview">
+          <h2>Platform Overview</h2>
+          <p>
+            ApusFly is a drone operating and aerial intelligence platform for
+            coordinating missions, validating operational readiness and
+            compliance, executing and monitoring flights, collecting live
+            mission data, and transforming aerial information into actionable
+            decisions. Service discovery, quotations, and booking are supported
+            workflows—not the primary product thesis. The web application should
+            share a single Next.js codebase with role-specific navigation,
+            dashboards, permissions, and organization-scoped data.
+          </p>
+          <p>
+            <b>Mission Operations:</b> mission intake, planning, dispatch, live
+            status, telemetry, incident escalation, and after-action review.<br /><b
+              >Compliance &amp; Readiness:</b
+            >
+            pilot qualifications, aircraft documentation, mission approvals,
+            safety checklists, and evidence trails.<br /><b
+              >Pilot &amp; Provider Network:</b
+            >
+            affiliations, qualifications, availability, deployment, utilization,
+            and performance.<br /><b>Aerial Intelligence:</b> authorized live
+            feeds, geospatial outputs, AI-assisted analytics, dashboards, and
+            decision-support reporting.<br /><b>Enterprise &amp; Government:</b>
+            inspections, monitoring, emergency incident requests, DFR
+            command-center coordination, and accountable reporting.<br /><b
+              >Commercial Workflows:</b
+            >
+            service discovery, quotations, bookings, billing, and payouts.
+          </p>
+          <p class="note">
+            Status: proposed functional requirements, not an implementation
+            audit. Telemetry, DFR, live video, AI, and compliance capabilities
+            are planned requirements and depend on integrations, authorizations,
+            and phased delivery.
+          </p>
+        </section>
+        <div id="roles"></div>
+        <script>
+          const roles = [
+            {
+              slug: "super-admin",
+              name: "Super Admin",
+              scope: "Entire Platform",
+              purpose:
+                "Highest-level governance, security, configuration, and administrative authority.",
+              groups: {
+                "Executive Dashboard": [
+                  "Platform-wide users, providers, pilots, drones, bookings, revenue, commissions and payouts",
+                  "Live booking and operational activity",
+                  "Compliance alerts, financial anomalies and integration health",
+                ],
+                "Identity & Access": [
+                  "Manage platform user lifecycle and account status",
+                  "Assign and revoke internal roles; review permission changes",
+                  "Review account access history; revoke sessions and tokens",
+                  "Enforce MFA for privileged accounts",
+                ],
+                "Platform Settings": [
+                  "Manage service categories, regions, booking and cancellation policies",
+                  "Configure commission rules, service fees and approved integrations",
+                  "Manage notifications, feature flags, maintenance notices and announcements",
+                ],
+                Governance: [
+                  "Review audit logs, verification decisions and incident reports",
+                  "Approve exceptional administrative changes",
+                  "Oversee retention policies and recovery readiness",
+                ],
+              },
+              restriction:
+                "Cannot bypass immutable audit records, payment controls, or mandatory approval procedures.",
+            },
+            {
+              slug: "system-admin",
+              name: "System Admin",
+              scope: "Platform Administration",
+              purpose:
+                "Runs routine administration and moderation without ownership-level authority.",
+              groups: {
+                "Administration Dashboard": [
+                  "Account and provider statistics",
+                  "Pending verification and moderation queues",
+                  "Administrative task and service health summaries",
+                ],
+                "User Administration": [
+                  "Search and filter customer, pilot and provider accounts",
+                  "Review account status and investigate violations",
+                  "Assist with account recovery and verification",
+                  "Assign only permitted operational roles",
+                ],
+                "Provider & Service Administration": [
+                  "Review provider onboarding documents",
+                  "Approve or reject eligible listings under policy",
+                  "Manage service categories and coverage references",
+                  "Flag suspicious listings or inactive providers",
+                ],
+                "Operational Configuration": [
+                  "Maintain permitted reference data and templates",
+                  "Manage FAQs, help content and announcements",
+                  "Export administrative and operational reports",
+                ],
+              },
+              restriction:
+                "Cannot grant Super Admin privileges, change ownership-level controls or modify settled financial records.",
+            },
+            {
+              slug: "operations-manager",
+              name: "Operations Manager",
+              scope: "Platform Operations",
+              purpose:
+                "Directs mission planning, dispatch, live operational monitoring, compliance readiness, pilot utilization, and incident response.",
+              groups: {
+                "Operations Dashboard": [
+                  "Scheduled, active, completed, cancelled and disputed bookings",
+                  "Unassigned jobs, delays and scheduling conflicts",
+                  "Pilot network availability, qualifications, utilization and geographic mission coverage",
+                ],
+                "Booking Coordination": [
+                  "Review and intervene in eligible bookings",
+                  "Coordinate provider/pilot reassignment and rescheduling",
+                  "Apply policy-governed cancellations",
+                  "Monitor booking state transitions",
+                ],
+                "Flight Operations": [
+                  "Monitor mission readiness, live mission status, telemetry and authorized real-time video/data feeds",
+                  "Review flight qualification, airspace/permit evidence, weather and pre-flight safety checklists",
+                  "Coordinate mission execution, operational alerts, incident escalation and after-action evidence",
+                ],
+                "Mission Intelligence & Compliance": [
+                  "Live mission telemetry, geofenced status and authorized camera feeds",
+                  "Pilot credential and aircraft compliance verification before dispatch",
+                  "Pilot network capacity planning and utilization analytics",
+                  "AI-assisted anomaly flags, mission summaries and decision-support reports",
+                ],
+                "Quality & Reporting": [
+                  "Monitor response times, completion rates and complaints",
+                  "Recommend provider restrictions for repeated failures",
+                  "Generate mission performance, telemetry-derived metrics, incident, utilization and after-action reports",
+                ],
+              },
+              restriction:
+                "No unrestricted payment adjustments, permission administration or rewriting settled transactions.",
+            },
+            {
+              slug: "customer-support",
+              name: "Customer Support Agent",
+              scope: "Customer Assistance",
+              purpose:
+                "Handles inquiries, disputes, tickets and customer-facing assistance.",
+              groups: {
+                "Support Dashboard": [
+                  "Open, assigned, escalated and resolved tickets",
+                  "Response deadlines, priorities and satisfaction metrics",
+                ],
+                "Ticket Handling": [
+                  "Create, classify, assign and resolve support cases",
+                  "Reply to users and attach evidence",
+                  "Maintain internal notes and escalation history",
+                  "Route cases to Operations, Finance or Technical Support",
+                ],
+                "Booking Assistance": [
+                  "Find bookings and inspect authorized status timelines",
+                  "Help request rescheduling or cancellation",
+                  "Investigate missed services and incomplete jobs",
+                  "Escalate refund requests to Finance",
+                ],
+                "Account Help & Knowledge Base": [
+                  "View minimal profile details needed for a case",
+                  "Guide registration, recovery and verification inquiries",
+                  "Maintain approved help articles and response templates",
+                ],
+              },
+              restriction:
+                "No direct refunds, role changes, full payment credentials or default access to private KYC documents.",
+            },
+            {
+              slug: "finance",
+              name: "Finance / Accounting",
+              scope: "Financial Operations",
+              purpose:
+                "Manages reconciliations, commissions, payouts, refunds and financial reporting.",
+              groups: {
+                "Finance Dashboard": [
+                  "Gross booking value, commissions and payable balances",
+                  "Captured, pending, failed, refunded and disputed payments",
+                  "Settlement and revenue trends",
+                ],
+                "Payments & Refunds": [
+                  "Review gateway transaction status and webhook results",
+                  "Reconcile gateway events against booking records",
+                  "Investigate duplicate or failed payments",
+                  "Approve or execute refunds within delegated limits",
+                ],
+                "Commissions & Payouts": [
+                  "Review commission calculations and statements",
+                  "Propose rate adjustments for approval",
+                  "Prepare payout batches and verify eligibility",
+                  "Track failed settlements, reversals and provider balances",
+                ],
+                "Accounting & Exports": [
+                  "Generate revenue, settlement and reconciliation reports",
+                  "Review chargebacks and refund history",
+                  "Export authorized accounting and tax-related records",
+                ],
+              },
+              restriction:
+                "Use separation of duties; no unilateral high-risk adjustments or alteration of settled ledger entries.",
+            },
+            {
+              slug: "provider-owner",
+              name: "Provider Owner",
+              scope: "Own Provider Organization",
+              purpose:
+                "Controls the registered drone service business and its personnel, services and earnings.",
+              groups: {
+                "Business Dashboard": [
+                  "Provider bookings, revenue, ratings and upcoming schedules",
+                  "Fleet and pilot readiness, qualification expiry, utilization, payout and compliance alerts",
+                ],
+                "Business & Team": [
+                  "Maintain provider business profile, locations and documents",
+                  "Manage verified payout information",
+                  "Invite or remove managers and staff",
+                  "Review team activity and pilot affiliations",
+                ],
+                "Fleet & Service Catalog": [
+                  "Register drones and track capabilities, maintenance and insurance",
+                  "Manage pilot network affiliations, qualifications, availability, assignments and utilization",
+                  "Create service listings, pricing, coverage and descriptions",
+                  "Pause listings or submit changes for platform review",
+                ],
+                "Mission Readiness & Intelligence": [
+                  "Pilot qualification checks and mission assignment readiness",
+                  "Operational telemetry visibility for authorized provider missions",
+                  "Fleet/pilot utilization, mission analytics and safety evidence",
+                ],
+                "Bookings & Earnings": [
+                  "Accept or decline requests; assign resources",
+                  "Track mission execution, authorized live data, completion evidence and disputes",
+                  "View earnings, fees, commissions and payout statements",
+                  "Export business performance reports",
+                ],
+              },
+              restriction:
+                "Cannot access other provider organizations or override platform-wide commission policies.",
+            },
+            {
+              slug: "provider-manager",
+              name: "Provider Manager",
+              scope: "Assigned Provider Organization",
+              purpose:
+                "Manages day-to-day service operations for a provider business.",
+              groups: {
+                "Operations Dashboard": [
+                  "Incoming bookings, active jobs and fulfillment alerts",
+                  "Pilot network deployment, utilization, drone availability and mission readiness",
+                ],
+                "Booking Management": [
+                  "Accept or decline delegated booking requests",
+                  "Assign pilots and drones; coordinate rescheduling",
+                  "Monitor live mission progress, telemetry summaries and submitted completion evidence",
+                ],
+                "Fleet & Workforce": [
+                  "Maintain pilot schedules and availability",
+                  "Monitor pilot qualifications, permit evidence, credential expiry and drone maintenance",
+                  "Flag unsafe or unavailable equipment",
+                  "Supervise provider staff and assigned tasks",
+                ],
+                "Services & Reports": [
+                  "Edit permitted listings and availability",
+                  "Propose pricing changes for Owner approval",
+                  "Generate pilot utilization, operational compliance and mission performance reports",
+                  "Investigate service complaints",
+                ],
+              },
+              restriction:
+                "Cannot change business ownership, payout destinations or sensitive financial settings without Owner approval.",
+            },
+            {
+              slug: "provider-staff",
+              name: "Provider Staff",
+              scope: "Assigned Provider Organization",
+              purpose:
+                "Supports booking coordination, schedules and routine provider records.",
+              groups: {
+                "Staff Dashboard": [
+                  "Assigned tasks and upcoming bookings",
+                  "Customer requests, calendar and notifications",
+                ],
+                "Booking Assistance": [
+                  "View assigned bookings and scheduling details",
+                  "Update permitted operational notes",
+                  "Coordinate customers and pilots",
+                  "Upload authorized service documents and evidence",
+                ],
+                "Scheduling & Records": [
+                  "Maintain booking calendars",
+                  "Record pilot and equipment availability",
+                  "Report delays, conflicts and maintenance needs",
+                  "Prepare booking summaries and provider records",
+                ],
+              },
+              restriction:
+                "Cannot change roles, approve refunds, access payout settings or override compliance decisions.",
+            },
+            {
+              slug: "enterprise",
+              name: "Enterprise Client",
+              scope: "Own Enterprise Organization",
+              purpose:
+                "Coordinates corporate drone service procurement, projects and spending.",
+              groups: {
+                "Organization Dashboard": [
+                  "Active projects, upcoming bookings and pending approvals",
+                  "Project spending, deliverables and provider performance",
+                ],
+                "Organization Administration": [
+                  "Maintain company, branch and department details",
+                  "Invite employees with scoped organization permissions",
+                  "Configure requester/approver roles and spending controls",
+                ],
+                "Procurement & Projects": [
+                  "Browse services and request custom quotations",
+                  "Compare proposals and submit single or bulk bookings",
+                  "Schedule recurring inspections or surveys",
+                  "Create projects and group bookings by site",
+                ],
+                "Aerial Intelligence": [
+                  "Mission dashboards with live status and authorized telemetry",
+                  "AI-assisted inspection findings and geospatial decision-support summaries",
+                  "Pilot/network performance and mission utilization reporting",
+                ],
+                "Deliverables & Billing": [
+                  "Review mission status, authorized live feeds, aerial imagery, geospatial outputs and AI-assisted analysis",
+                  "Request revisions or lodge disputes",
+                  "Download invoices, receipts and authorized deliverables",
+                  "Export project and spending summaries",
+                ],
+              },
+              restriction:
+                "All records and approvals are limited to the organization and the user’s assigned projects.",
+            },
+            {
+              slug: "government",
+              name: "Government / LGU Client",
+              scope: "Own Government Organization",
+              purpose:
+                "Coordinates authorized government aerial operations, incident response, DFR command-center workflows, mission oversight and decision-support reporting.",
+              groups: {
+                "Agency Dashboard": [
+                  "Agency projects, service requests and pending approvals",
+                  "Mission status, live operational feeds, incident priorities, budgets and intelligence deliverables",
+                ],
+                "Agency Administration": [
+                  "Manage agency, departments and authorized personnel",
+                  "Assign requesters and approvers",
+                  "Configure approval chains, operational jurisdictions, project locations and incident access controls",
+                ],
+                "Service Requests & Coordination": [
+                  "Initiate inspection, mapping, environmental monitoring and emergency incident mission requests",
+                  "Coordinate authorized drone-as-first-responder (DFR) dispatch and command-center response",
+                  "Authorize and schedule missions, track pilot/drone qualifications and compliance approvals",
+                  "View real-time mission telemetry, live feeds, status alerts and command-center incident timelines",
+                ],
+                "DFR Command Center": [
+                  "Incident intake, triage, dispatch and mission authorization",
+                  "Real-time aircraft position, telemetry, live feeds and incident map views",
+                  "Role-scoped multi-agency coordination and escalation",
+                  "After-action timelines, evidence packages and decision-support reporting",
+                ],
+                "Records & Reports": [
+                  "Attach procurement references and approved budget identifiers",
+                  "Review aerial imagery, mapping, AI-assisted assessments and geospatial intelligence outputs",
+                  "Generate after-action reports, incident timelines, mission evidence and decision-support dashboards",
+                  "Access invoices and authorized documentation exports",
+                ],
+              },
+              restriction:
+                "Agency-scoped access, least-privilege live feeds and auditable incident data. DFR operations require applicable aviation, privacy, public-sector and emergency-response authorizations; software features alone do not establish compliance.",
+            },
+            {
+              slug: "sales",
+              name: "Sales / Business Development Staff",
+              scope: "Platform Sales & Partnerships",
+              purpose:
+                "Acquires providers, enterprise accounts, government clients and strategic partners.",
+              groups: {
+                "Sales Dashboard": [
+                  "Lead funnel, acquisition targets and conversion rates",
+                  "Active opportunities, upcoming meetings and follow-ups",
+                ],
+                "Lead Management": [
+                  "Create and categorize provider, enterprise, LGU and partner leads",
+                  "Assign lead owners and record communications",
+                  "Track meetings, requirements and next steps",
+                ],
+                "Deals & Partnerships": [
+                  "Manage provider acquisition pipeline",
+                  "Prepare partnership and commercial proposals",
+                  "Track negotiations and contracts",
+                  "Submit special pricing or discounts for approval",
+                ],
+                Performance: [
+                  "Forecast opportunities and conversion",
+                  "Report partnership and acquisition activity",
+                  "Handoff closed opportunities to Operations and Finance",
+                ],
+              },
+              restriction:
+                "Cannot unilaterally change commission rates or approve exceptional commercial terms.",
+            },
+            {
+              slug: "marketing",
+              name: "Marketing Manager",
+              scope: "Platform Marketing",
+              purpose:
+                "Manages campaigns, content, promotions and acquisition analytics.",
+              groups: {
+                "Marketing Dashboard": [
+                  "Campaign conversion, traffic and acquisition trends",
+                  "Promotional redemptions, funnel and budget metrics",
+                ],
+                "Campaigns & Promotions": [
+                  "Create and schedule campaigns",
+                  "Manage approved vouchers, referral campaigns and banners",
+                  "Track budgets, reach and campaign performance",
+                ],
+                "Content Management": [
+                  "Edit permitted landing pages and service descriptions",
+                  "Publish news, articles and promotional media",
+                  "Maintain marketing FAQs and announcements",
+                ],
+                "Audience & Reporting": [
+                  "Analyze aggregated audience segments",
+                  "Measure campaign sources and qualified leads",
+                  "Coordinate lead handoffs with Sales",
+                  "Export marketing performance reports",
+                ],
+              },
+              restriction:
+                "No default access to private KYC, financial details or unconsented personal data; honor opt-outs.",
+            },
+            {
+              slug: "auditor",
+              name: "Auditor",
+              scope: "Authorized Read-Only Oversight",
+              purpose:
+                "Independently reviews business processes, transactions, permissions and compliance evidence.",
+              groups: {
+                "Audit Dashboard": [
+                  "Administrative changes and security events",
+                  "Financial exceptions and review queues",
+                ],
+                "Access & Activity Review": [
+                  "Inspect relevant logins and permission history",
+                  "Review provider/pilot qualification evidence, compliance decisions and account status changes",
+                  "Trace mission approvals, dispatch, live-data access, flight events and operational incidents",
+                ],
+                "Financial Review": [
+                  "Inspect authorized transaction and settlement records",
+                  "Trace refunds, payout approvals and adjustments",
+                  "Identify reconciliation anomalies",
+                ],
+                "Findings & Reporting": [
+                  "Document audit findings and recommendations",
+                  "Export approved evidence and reports",
+                  "Track management responses and corrective actions",
+                ],
+              },
+              restriction:
+                "Read-only for underlying business records; no refunds, payments, role changes or audit log deletion. Sensitive evidence access is logged.",
+            },
+            {
+              slug: "technical-support",
+              name: "Technical Support",
+              scope: "Platform Technical Operations",
+              purpose:
+                "Diagnoses application incidents, API failures and integration issues.",
+              groups: {
+                "Technical Dashboard": [
+                  "Availability, API errors, telemetry ingestion, streaming and queue failures",
+                  "Open incidents and integration alerts",
+                ],
+                "Incident Handling": [
+                  "Receive escalated technical tickets",
+                  "Triage by severity and document troubleshooting",
+                  "Escalate infrastructure problems and maintain timelines",
+                  "Prepare post-incident reports",
+                ],
+                Diagnostics: [
+                  "Review sanitized logs and request identifiers",
+                  "Monitor background jobs, telemetry/stream integrations and connectivity",
+                  "Inspect deployment status and non-sensitive metadata",
+                  "Diagnose authentication and notification failures",
+                ],
+                Maintenance: [
+                  "Track recurring bugs and known issues",
+                  "Issue approved maintenance notices",
+                  "Retry safe idempotent operations where authorized",
+                  "Coordinate fixes with engineering teams",
+                ],
+              },
+              restriction:
+                "No default production database writes, secret retrieval, payment edits or unrestricted user impersonation.",
+            },
+          ];
+          const esc = (s) =>
+            String(s).replace(
+              /[&<>"']/g,
+              (c) =>
+                ({
+                  "&": "&amp;",
+                  "<": "&lt;",
+                  ">": "&gt;",
+                  '"': "&quot;",
+                  "'": "&#39;",
+                })[c],
+            );
+          document.getElementById("roles").innerHTML = roles
+            .map(
+              (r, i) =>
+                `<section class="role" id="${r.slug}"><div class="rolehead"><div><div class="eyebrow" style="color:#28649b">Role ${String(i + 1).padStart(2, "0")}</div><h2>${esc(r.name)}</h2><div class="purpose">${esc(r.purpose)}</div></div><span class="pill">${esc(r.scope)}</span></div><div class="groups">${Object.entries(
+                  r.groups,
+                )
+                  .map(
+                    ([heading, items]) =>
+                      `<div class="group"><h3>${esc(heading)}</h3><ul>${items.map((item) => `<li>${esc(item)}</li>`).join("")}</ul></div>`,
+                  )
+                  .join(
+                    "",
+                  )}</div><div class="restriction"><b>Access boundary:</b> ${esc(r.restriction)}</div></section>`,
+            )
+            .join("");
+        </script>
+        <section class="section" id="portals">
+          <h2>Recommended Portal Structure</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Portal</th>
+                <th>Route</th>
+                <th>Roles</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Platform Administration</td>
+                <td><code>/admin</code></td>
+                <td>
+                  Super Admin, System Admin, Operations, Customer Support,
+                  Finance, Sales, Marketing, Auditor, Technical Support
+                </td>
+              </tr>
+              <tr>
+                <td>Provider Management</td>
+                <td><code>/provider</code></td>
+                <td>Provider Owner, Provider Manager, Provider Staff</td>
+              </tr>
+              <tr>
+                <td>Organization Clients</td>
+                <td><code>/organization</code></td>
+                <td>Enterprise Client, Government / LGU Client</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="note">
+            Suggested host: <code>platform.apusfly.com</code>. Share UI
+            components while tailoring navigation and permissions by role.
+          </p>
+        </section>
+        <section class="section" id="rbac">
+          <h2>RBAC and Security Requirements</h2>
+          <p>
+            <b>Platform roles</b> should be assigned through platform-level
+            user-role relationships. <b>Provider roles</b> and
+            <b>organization client roles</b> should be bound to memberships
+            within a specific provider or organization. The same user may hold
+            different roles in different organizations.
+          </p>
+          <p>
+            Example permission names: <code>platform.users.read</code>,
+            <code>platform.audit.read</code>,
+            <code>platform.missions.dispatch</code>,
+            <code>platform.telemetry.read</code>,
+            <code>platform.finance.refunds.approve</code>,
+            <code>provider.pilots.assign</code>,
+            <code>provider.qualifications.review</code>,
+            <code>provider.drones.update</code>,
+            <code>organization.missions.request</code>,
+            <code>organization.incidents.dispatch</code>,
+            <code>organization.live_feeds.read</code>,
+            <code>organization.after_action_reports.read</code>.
+          </p>
+          <p>
+            Laravel must enforce every permission and resource ownership rule on
+            the server. Hiding menu items in Next.js is only a user-interface
+            convenience. Sensitive actions require audit trails, and high-risk
+            financial or access changes should use separation of duties. Live
+            telemetry, video feeds, incident records and AI outputs need
+            explicit access policies, retention controls, source attribution,
+            and human review for consequential decisions. Mission approvals must
+            not be treated as proof of regulatory authorization.
+          </p>
+          <p class="note">
+            The prior RBAC seeders covered 12 roles; the updated 14-role web
+            specification adds Sales / Business Development, Marketing Manager,
+            Auditor, and Technical Support. Align seeders and permission
+            policies before enabling these roles.
+          </p>
+        </section>
+        <section class="section" id="roadmap">
+          <h2>Recommended Implementation Roadmap</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Phase</th>
+                <th>Roles</th>
+                <th>Primary Goal</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1 — Foundation</td>
+                <td>Super Admin, System Admin</td>
+                <td>
+                  Authentication, RBAC hardening, users and administration
+                </td>
+              </tr>
+              <tr>
+                <td>2 — Providers</td>
+                <td>Owner, Manager, Staff</td>
+                <td>
+                  Provider onboarding, pilot network, qualifications, fleet and
+                  readiness
+                </td>
+              </tr>
+              <tr>
+                <td>3 — Operations</td>
+                <td>Operations Manager, Customer Support</td>
+                <td>
+                  Mission intake, dispatch, live monitoring, telemetry,
+                  incidents and tickets
+                </td>
+              </tr>
+              <tr>
+                <td>4 — Finance</td>
+                <td>Finance / Accounting</td>
+                <td>Bookings, payments, commissions, refunds and payouts</td>
+              </tr>
+              <tr>
+                <td>5 — Organizations</td>
+                <td>Enterprise, Government / LGU</td>
+                <td>
+                  Mission requests, government/DFR command center, approvals and
+                  intelligence reporting
+                </td>
+              </tr>
+              <tr>
+                <td>6 — Expansion</td>
+                <td>Sales, Marketing, Auditor, Technical Support</td>
+                <td>
+                  Growth, oversight, telemetry/AI analytics, diagnostics and
+                  advanced administration
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="note">
+            Define all 14 roles early; implement their workflows in phases. Live
+            telemetry and DFR integration depend on aircraft connectivity,
+            secure streaming, regulatory review, and agency operating
+            procedures; AI insights are advisory and require validation.
+            Organization clients will eventually benefit from additional scoped
+            subroles such as Organization Admin, Requester and Approver.
+          </p>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
